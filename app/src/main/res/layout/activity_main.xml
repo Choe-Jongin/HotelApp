@@ -47,6 +47,7 @@
                 android:textSize="20sp"
                 android:text="선택"/>
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/periodout"
             android:layout_width="match_parent"
@@ -76,16 +77,29 @@
                 android:textSize="20sp"
                 android:text="선택"/>
         </LinearLayout>
-
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/roomlistframent"
-        android:name="com.example.hotel.roomtypeFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_below="@id/period"
-        tools:layout="@layout/activity_main" />
+        android:background="?android:attr/listDivider"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingTop="10dp"
+        android:layout_below="@id/divider">
+
+        <fragment
+            android:id="@+id/roomlistframent"
+            android:name="com.example.hotel.roomtypeFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/activity_main" />
+    </ScrollView>
 
 
 </RelativeLayout>

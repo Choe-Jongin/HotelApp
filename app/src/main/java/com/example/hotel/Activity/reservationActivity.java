@@ -7,7 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +22,7 @@ import org.w3c.dom.Text;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class reservationActivity extends AppCompatActivity {
@@ -42,6 +47,12 @@ public class reservationActivity extends AppCompatActivity {
         preiod = (int)(checkout.getTimeInMillis()/(24*60*60*1000))- (int)(checkin.getTimeInMillis()/(24*60*60*1000));
         addperson = 0;
 
+        ArrayList<Integer> items = new ArrayList<Integer>();
+        for( int i = 0 ; i <= roomInfo.getAdd_person_num() ; ++i)
+            items.add(i);
+        ArrayAdapter<Integer> spinnerAdap = new ArrayAdapter<Integer>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item,items);
+
+        //뷰 얻기
         ImageView ivThumbnail = (ImageView)findViewById(R.id.roomthumb);
         TextView tvPreiodstart = (TextView)findViewById(R.id.tv_period_start);
         TextView tvPreiodsend = (TextView)findViewById(R.id.tv_period_end);
@@ -53,8 +64,9 @@ public class reservationActivity extends AppCompatActivity {
         TextView tvMaxaddperson = (TextView)findViewById(R.id.tv_max_add_person);
         TextView tvAddprice = (TextView)findViewById(R.id.tv_addtionalprice);
         TextView tvTotalprice = (TextView)findViewById(R.id.tv_totalprice);
-
-
+        Spinner spAddperson = (Spinner)findViewById(R.id.spinner_add_person);
+        
+        //값 설정
         ivThumbnail.setImageDrawable(roomInfo.getDrawableThumbnail());
         tvPreiodstart.setText(preiodformatter.format(checkin.getTime()));
         tvPreiodsend.setText(preiodformatter.format(checkout.getTime()));
@@ -66,11 +78,29 @@ public class reservationActivity extends AppCompatActivity {
         tvAddperson.setText(Integer.toString(addperson));
         tvMaxaddperson.setText(roomInfo.getBase_person_num()+"명");
         tvAddprice.setText("$"+addperson*roomInfo.getAdd_price_per_person());
-        int a = preiod*roomInfo.getBase_price();
-        int b = addperson*roomInfo.getAdd_price_per_person();
         tvTotalprice.setText("$"+(preiod*roomInfo.getBase_price()+addperson*roomInfo.getAdd_price_per_person()));
+        spAddperson.setAdapter(spinnerAdap);
+        spAddperson.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ChangeAddPerson(i);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
 
+    private void ChangeAddPerson(int i){
 
+        TextView tvAddperson = (TextView)findViewById(R.id.tv_add_person);
+        TextView tvAddprice = (TextView)findViewById(R.id.tv_addtionalprice);
+        TextView tvTotalprice = (TextView)findViewById(R.id.tv_totalprice);
+
+        addperson = i;
+        tvAddperson.setText(Integer.toString(addperson));
+        tvAddprice.setText("$"+addperson*roomInfo.getAdd_price_per_person());
+        tvTotalprice.setText("$"+(preiod*roomInfo.getBase_price()+addperson*roomInfo.getAdd_price_per_person()));
     }
 
 }
