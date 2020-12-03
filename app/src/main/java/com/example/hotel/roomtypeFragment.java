@@ -58,7 +58,6 @@ public class roomtypeFragment extends ListFragment {
                 info.setThumbnailUrl("http://jonginfi.iptime.org:5000/room/thumbnail/" + info.getThumbnailUrl() + ".png");
                 roominfos.add(info);
                 adapter.addItem(info.getDrawableThumbnail(), info.getType(), "$" +info.getBase_price() + " per day");
-                adapter.addItem(info.getDrawableThumbnail(), info.getType(), "$" +info.getBase_price() + " per day");
             }
         }catch (Exception e){
             e.printStackTrace();

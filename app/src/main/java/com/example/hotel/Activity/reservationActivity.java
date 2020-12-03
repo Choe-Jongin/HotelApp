@@ -15,9 +15,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hotel.ConnectServer;
 import com.example.hotel.Object.RoomInfo;
 import com.example.hotel.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.text.Format;
@@ -76,7 +80,7 @@ public class reservationActivity extends AppCompatActivity {
         tvCharge.setText("$"+preiod*roomInfo.getBase_price());
         tvDayprice.setText("$"+roomInfo.getBase_price());
         tvAddperson.setText(Integer.toString(addperson));
-        tvMaxaddperson.setText(roomInfo.getBase_person_num()+"명");
+        tvMaxaddperson.setText(roomInfo.getAdd_person_num()+"명");
         tvAddprice.setText("$"+addperson*roomInfo.getAdd_price_per_person());
         tvTotalprice.setText("$"+(preiod*roomInfo.getBase_price()+addperson*roomInfo.getAdd_price_per_person()));
         spAddperson.setAdapter(spinnerAdap);
@@ -101,6 +105,29 @@ public class reservationActivity extends AppCompatActivity {
         tvAddperson.setText(Integer.toString(addperson));
         tvAddprice.setText("$"+addperson*roomInfo.getAdd_price_per_person());
         tvTotalprice.setText("$"+(preiod*roomInfo.getBase_price()+addperson*roomInfo.getAdd_price_per_person()));
+    }
+    public void btn_FindRoomClick(View v){
+        if( v.getId() == R.id.btn_FindRoom){
+            try {
+                JSONArray rooms = ConnectServer.POST("http://jonginfi.iptime.org:5000/room/availableRoom", new JSONObject("{type:" + roomInfo.getType()+"}"));
+                if(rooms.length() > 0 ){
+                    ((TextView)findViewById(R.id.tv_availiable)).setText(rooms.length()+"개의 방이 예약이 가능합니다.");
+                }else{
+                    ((TextView)findViewById(R.id.tv_availiable)).setText("이용 가능한 방이 없습니다.");
+                }
+                for (int i = 0; i < rooms.length(); i++) {
+                    JSONObject room = rooms.getJSONObject(i);
+                }
+            } catch (JSONException e) {
+                ((TextView)findViewById(R.id.tv_availiable)).setText("다시 시도해 주세요");
+                e.printStackTrace();
+            }
+        }
+    }
+    public void btn_reserveclick(View v){
+        if( v.getId() == R.id.btn_reserve){
+
+        }
     }
 
 }

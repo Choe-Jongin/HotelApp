@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hotel"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.reservationActivity"></activity>
+        <activity android:name=".Activity.reservationActivity" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
