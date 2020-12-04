@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hotel"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:label="@string/title_activity_login"></activity>
         <activity android:name=".Activity.reservationActivity" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>

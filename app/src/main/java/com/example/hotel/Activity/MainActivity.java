@@ -1,26 +1,24 @@
 package com.example.hotel.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hotel.R;
+import com.example.hotel.User;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -99,5 +97,30 @@ public class MainActivity extends AppCompatActivity {
     public static Calendar[] getPeriod(){
         return new Calendar[]{checkin,checkout};
     }
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_login:
+                try {
+                    if(User.getInstance().isLogind() == false) {
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        startActivity(intent);
+                        item.setTitle("로그아웃");
+                    }else
+                    {
+                        item.setTitle("로그인");
+                        User.getInstance().LogOut();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

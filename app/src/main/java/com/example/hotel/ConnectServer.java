@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.StrictMode;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -21,6 +22,9 @@ public class ConnectServer {
 
     public static Bitmap noimagebit = loadBitmap("http://jonginfi.iptime.org:5000/room/thumbnail/noimage.png");
     public static Drawable noimagedraw = new BitmapDrawable(noimagebit);
+    private static int code = 200;
+
+    private static String address = "http://jonginfi.iptime.org:5000";
 
     //Get으로 연결하여 결과 반환
     public static JSONArray GET(String urlStr){
@@ -38,6 +42,7 @@ public class ConnectServer {
             connection.setUseCaches(false);             // 캐싱데이터를 받을지 안받을지
             connection.setConnectTimeout(5000);        // 통신 타임아웃
             int responseCode = connection.getResponseCode();
+            code = responseCode;
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
@@ -77,6 +82,7 @@ public class ConnectServer {
             os.flush();
 
             int responseCode = connection.getResponseCode();
+            code = responseCode;
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
@@ -85,7 +91,13 @@ public class ConnectServer {
                     response.append(inputLine);
                 }
                 in.close();
-                res =  new JSONArray(response.toString());
+                try {
+                    res = new JSONArray(response.toString());
+                }catch (JSONException e){
+                    JSONArray arr = new JSONArray();
+                    arr.put(new JSONObject( response.toString()));
+                    res = arr;
+                }
             }
             if( connection != null)
                 connection.disconnect();
@@ -127,4 +139,19 @@ public class ConnectServer {
         return imgBitmap;
     }
 
+
+    public static int getCode() {
+        return code;
+    }
+
+    public static String getAddress(String add) {
+        return address+add;
+    }
+    public static String getAddress() {
+        return address;
+    }
+
+    public static void setAddress(String add) {
+        address = add;
+    }
 }

@@ -18,7 +18,9 @@ import android.widget.Toast;
 import com.example.hotel.ConnectServer;
 import com.example.hotel.Object.RoomInfo;
 import com.example.hotel.R;
+import com.example.hotel.User;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +39,8 @@ public class reservationActivity extends AppCompatActivity {
     int preiod = 1;
     int addperson = 0;
     Format preiodformatter = new SimpleDateFormat("yyyy-MM-dd");
+    boolean isReserveAvaliable = false;
+    String room_num = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class reservationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reservation);
         Intent intent = getIntent();
 
+        isReserveAvaliable = false;
         checkin     = ((Calendar[]) intent.getSerializableExtra("preiod"))[0];
         checkout    = ((Calendar[]) intent.getSerializableExtra("preiod"))[1];
         roomInfo    = (RoomInfo) intent.getSerializableExtra("roominfo");
@@ -109,16 +114,17 @@ public class reservationActivity extends AppCompatActivity {
     public void btn_FindRoomClick(View v){
         if( v.getId() == R.id.btn_FindRoom){
             try {
-                JSONArray rooms = ConnectServer.POST("http://jonginfi.iptime.org:5000/room/availableRoom", new JSONObject("{type:" + roomInfo.getType()+"}"));
+                JSONArray rooms = ConnectServer.POST(ConnectServer.getAddress("/room/availableRoom"), new JSONObject("{type:" + roomInfo.getType()+"}"));
                 if(rooms.length() > 0 ){
                     ((TextView)findViewById(R.id.tv_availiable)).setText(rooms.length()+"개의 방이 예약이 가능합니다.");
+                    room_num = rooms.getJSONObject(0).getString("num");
+                    isReserveAvaliable = true;
                 }else{
                     ((TextView)findViewById(R.id.tv_availiable)).setText("이용 가능한 방이 없습니다.");
-                }
-                for (int i = 0; i < rooms.length(); i++) {
-                    JSONObject room = rooms.getJSONObject(i);
+                    isReserveAvaliable = false;
                 }
             } catch (JSONException e) {
+                isReserveAvaliable = false;
                 ((TextView)findViewById(R.id.tv_availiable)).setText("다시 시도해 주세요");
                 e.printStackTrace();
             }
@@ -126,7 +132,17 @@ public class reservationActivity extends AppCompatActivity {
     }
     public void btn_reserveclick(View v){
         if( v.getId() == R.id.btn_reserve){
+            try {
+                JSONObject o = new JSONObject();
+                o.put("customerId", User.getInstance().getId());
+                o.put("roomNumber",room_num);
+                o.put("checkInDate",checkin);
+                o.put("checkOutDate",checkout);
+                JSONArray rooms = ConnectServer.POST(ConnectServer.getAddress("/reservation/add"), o);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

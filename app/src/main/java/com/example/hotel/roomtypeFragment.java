@@ -55,7 +55,7 @@ public class roomtypeFragment extends ListFragment {
                 for (Iterator<String> it = o.keys(); it.hasNext();)
                     k[index++] = it.next();
                 RoomInfo info = new RoomInfo(o.getInt(k[0]),o.getString(k[1]),o.getString(k[2]),o.getInt(k[3]),o.getInt(k[4]),o.getInt(k[5]),o.getInt(k[6]), o.getString(k[7]));
-                info.setThumbnailUrl("http://jonginfi.iptime.org:5000/room/thumbnail/" + info.getThumbnailUrl() + ".png");
+                info.setThumbnailUrl(ConnectServer.getAddress("/room/thumbnail/") + info.getThumbnailUrl() + ".png");
                 roominfos.add(info);
                 adapter.addItem(info.getDrawableThumbnail(), info.getType(), "$" +info.getBase_price() + " per day");
             }
