@@ -114,8 +114,13 @@ public class reservationActivity extends AppCompatActivity {
     public void btn_FindRoomClick(View v){
         if( v.getId() == R.id.btn_FindRoom){
             try {
-                JSONArray rooms = ConnectServer.POST(ConnectServer.getAddress("/room/availableRoom"), new JSONObject("{type:" + roomInfo.getType()+"}"));
-                if(rooms.length() > 0 ){
+                JSONObject o = new JSONObject();
+                o.put("type_id", roomInfo.getId());
+                o.put("check_in_date", preiodformatter.format(checkin.getTime()));
+                o.put("check_out_date", preiodformatter.format(checkout.getTime()));
+                JSONArray rooms = ConnectServer.POST(ConnectServer.getAddress("/room/availableRoom"), o);
+
+                if(rooms!=null && rooms.length() > 0 ){
                     ((TextView)findViewById(R.id.tv_availiable)).setText(rooms.length()+"개의 방이 예약이 가능합니다.");
                     room_num = rooms.getJSONObject(0).getString("num");
                     isReserveAvaliable = true;
@@ -132,14 +137,28 @@ public class reservationActivity extends AppCompatActivity {
     }
     public void btn_reserveclick(View v){
         if( v.getId() == R.id.btn_reserve){
+
+            if( isReserveAvaliable == false){
+                Toast.makeText(getApplicationContext(), "예약 가능을 확인해 주세요 .", Toast.LENGTH_SHORT).show();
+                return;
+            }else if( User.getInstance().isLogind() == false){
+                Toast.makeText(getApplicationContext(), "예약은 로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             try {
                 JSONObject o = new JSONObject();
                 o.put("customerId", User.getInstance().getId());
-                o.put("roomNumber",room_num);
-                o.put("checkInDate",checkin);
-                o.put("checkOutDate",checkout);
-                JSONArray rooms = ConnectServer.POST(ConnectServer.getAddress("/reservation/add"), o);
-
+                o.put("room_num",room_num);
+                o.put("check_in_date",preiodformatter.format(checkin.getTime()));
+                o.put("check_out_date",preiodformatter.format(checkout.getTime()));
+                o.put("add_person", roomInfo.getAdd_person_num());
+                JSONArray reserv = ConnectServer.POST(ConnectServer.getAddress("/reservation/add"), o);
+                if(reserv !=null ) {
+                    int id = reserv.getJSONObject(0).getInt("reservation_id");
+                    Toast.makeText(getApplicationContext(), "예약 번호(ID) : " + id + " 예약 완료", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

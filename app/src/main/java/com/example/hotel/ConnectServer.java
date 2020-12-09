@@ -51,7 +51,13 @@ public class ConnectServer {
                     response.append(inputLine);
                 }
                 in.close();
-                res =  new JSONArray(response.toString());
+                try {
+                    res = new JSONArray(response.toString());
+                }catch (JSONException e){
+                    JSONArray arr = new JSONArray();
+                    arr.put(new JSONObject( response.toString()));
+                    res = arr;
+                }
             }
             if( connection != null)
                 connection.disconnect();

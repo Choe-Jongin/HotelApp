@@ -1,15 +1,20 @@
 package com.example.hotel.Activity;
 
+import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.hotel.ConnectServer;
 import com.example.hotel.R;
@@ -42,13 +47,17 @@ public class LoginActivity extends AppCompatActivity {
                 Result result = Login(id,pw);
                 if(result == Result.succ){
                     ((TextView)findViewById(R.id.loginmsg)).setText("");
-                    //Toast.makeText(getApplicationContext(), User.getInstance().getName()+"님 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), User.getInstance().getName()+"님 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
                     finish();
                 }else if(result == Result.notfoundid){
+                    Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                    startActivity(intent);
                     ((TextView)findViewById(R.id.loginmsg)).setText("아이디를 찾을 수 없습니다.");
                 }else if(result == Result.nomath){
                     ((TextView)findViewById(R.id.loginmsg)).setText("비밀번호가 일치하지 않습니다.");
                 }else{
+                    Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                    startActivity(intent);
                     ((TextView)findViewById(R.id.loginmsg)).setText("로그인 실패");
                 }
             }
@@ -63,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             if( reCode == 200 ){
                 JSONObject o = arr.getJSONObject(0);
                 User.getInstance().Login(id, pw, o.getString("name"), o.getInt("authority"), o.getString("cardnum"));
+                MainActivity.menuItem.setTitle("로그아웃");
                 return Result.succ;
             }else if( reCode == 404){
                 return Result.notfoundid;

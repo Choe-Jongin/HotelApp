@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private enum check{in, out};
     private check type;
 
+    static MenuItem menuItem;
     private DatePickerDialog.OnDateSetListener callbackMethod;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,11 +108,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_login:
                 try {
                     if(User.getInstance().isLogind() == false) {
+                        menuItem = item;
                         Intent intent = new Intent(this, LoginActivity.class);
                         startActivity(intent);
-                        item.setTitle("로그아웃");
-                    }else
-                    {
+                    }else{
                         item.setTitle("로그인");
                         User.getInstance().LogOut();
                     }
